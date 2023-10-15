@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 
+import os
+
+
 WORDS = []
 
 
 def load_directory():
-    with open("/usr/share/dict/words") as words:
+    if os.path.exists("twl.txt"):
+        filename = "twl.txt"
+    else:
+        filename = "/usr/share/dict/words"
+
+    with open(filename) as words:
         for w in words.readlines():
             WORDS.append(w.strip())
 
@@ -21,13 +29,17 @@ def guess_forever():
         print("Guess the word: {}".format(WORDS[guess_index]))
 
         player_input = input(
-            "Did the opponent say their word is BEFORE (-), AFTER (+), or EXACTLY (0) the guess: "
+            "Was the clue BEFORE (-), AFTER (+), or EXACT (0)? (q=quit, !=rejected word): "
         )
 
         if player_input.lower().startswith("q"):
             raise EOFError
 
-        if player_input not in ["-", "+", "0"]:
+        if player_input not in ["-", "+", "0", "!"]:
+            continue
+
+        if player_input == "!":
+            guess_index -= 1
             continue
 
         if player_input == "0":
